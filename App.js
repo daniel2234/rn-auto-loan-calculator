@@ -13,7 +13,18 @@ export default function App() {
     return number.toFixed(2).toLocaleString("en-US");
   }
 
+  function monthlyInterestRateConversion(interest) {
+    return Number(interest) / 12;
+  }
+  
+  function interestRateConversion(interest) {
+    return Number(interest) / 100;
+  }
+
   function monthlyPaymentCalculation(loanAmount, interest, loanMonthDuration) {
+    interest = monthlyInterestRateConversion(interest);
+    interest = interestRateConversion(interest);
+
     let answer = loanAmount *
       (interest / (1 - Math.pow((1 + interest), (-loanMonthDuration))));
     let formattedAnswer = showFormattedLoanAmount(answer);
@@ -22,7 +33,7 @@ export default function App() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Auto Loan Calculator</Text>
-      <View style={{flexDirection:'row', backgroundColor:'pink'}}>
+      <View style={{flexDirection:'row', backgroundColor:'pink', flexShrink:2}}>
          <Text style={{padding:20, backgroundColor:'green'}}>Loan Amount</Text>
           <TextInput 
           style={styles.input}
