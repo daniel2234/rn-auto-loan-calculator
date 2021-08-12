@@ -3,6 +3,8 @@ import { Button, KeyboardAvoidingView, ScrollView, StyleSheet, Text, TextInput, 
 
 //https://stackoverflow.com/questions/44357336/setting-up-a-table-layout-in-react-native
 //https://stackoverflow.com/questions/52661362/textinput-full-view-in-row-direction
+//https://stackoverflow.com/questions/67623854/how-to-reference-button-in-card-component-in-react-native
+
 
 // in essence:
 // 1. Initialise state with a boolean set to false
@@ -79,6 +81,29 @@ export default function App() {
     setAnswer(formattedAnswer);
   }
 
+  function calculateMonthlyAmorizations(monthlyPayment, loanAmount, interest, loanMonthDuration) {
+    let amorizationArray = []
+    let monthlyRate = interest / 100 / 12 //
+    let payment = loanAmount * (monthlyRate/(1-Math.pow(
+      1+monthlyRate, -loanMonthDuration)));
+    let interestPayment = 0
+    let principalPayment = 0
+  
+    for (let i = 1; i <= loanMonthDuration; i++) {
+      let monthly = {}
+      monthly["month"] =  i;
+      monthly["beginning_balance"] = loanAmount;
+      interestPayment = loanAmount * monthlyRate
+      monthly["interest"] = interestPayment;
+      principalPayment = payment - interestPayment
+      monthly["principal"] = principalPayment;
+      monthly["ending_balance"] = loanAmount - principalPayment;
+      loanAmount = loanAmount - principalPayment;
+      amorizationArray.push(monthly);
+    }
+    return amorizationArray;
+  }
+    
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Auto Loan Calculator</Text>
