@@ -1,5 +1,9 @@
 import React from 'react';
-import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Button, KeyboardAvoidingView, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+
+//https://stackoverflow.com/questions/44357336/setting-up-a-table-layout-in-react-native
+//https://stackoverflow.com/questions/52661362/textinput-full-view-in-row-direction
+
 
 export default function App() {
 
@@ -33,48 +37,67 @@ export default function App() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Auto Loan Calculator</Text>
-      <View style={{flexDirection:'row', backgroundColor:'pink', flexShrink:2}}>
-         <Text style={{padding:20, backgroundColor:'green'}}>Loan Amount</Text>
-          <TextInput 
-          style={styles.input}
-          onChangeText={loanAmount => setLoanAmount(loanAmount)}
-          placeholder="Enter value"
-          keyboardType="numeric"
-        />
-      </View>
-      <View style={{flexDirection:'row', backgroundColor:'red'}}>
-         <Text style={{padding:20, backgroundColor:'green'}}>Loan Month Duration</Text>
-          <TextInput 
-          style={styles.input}
-          onChangeText={loanMonthDuration => setLoanMonthDuration(loanMonthDuration)}
-          placeholder="Enter value"
-          keyboardType="numeric"
-        />
-      </View>
-      <View style={{flexDirection:'row', backgroundColor:'lightblue'}}>
-         <Text style={{ padding:20, backgroundColor:'green'}}>Monthly Interest Rate</Text>
-          <TextInput 
-          style={styles.input}
-          onChangeText={monthlyInterestRate=> setMonthlyInterestRate(monthlyInterestRate)}
-          placeholder="Enter value"
-          keyboardType="numeric"
-        />
-      </View>
-      <View style={{backgroundColor:'lightblue'}}>
-        <Button title = "Calculate" onPress={()=> monthlyPaymentCalculation(loanAmount, monthlyInterestRate, loanMonthDuration)} />
-      </View>
+      
       <View>
+
       </View>
-      {
+      
+      <KeyboardAvoidingView
+       behavior={Platform.OS === "ios" ? "padding" : "height"}
+       >
+         <ScrollView>
+          <View style={styles.test}>
+            <Text style={styles.testText}>Loan Amount</Text>
+            <TextInput style={styles.input}
+            onChangeText={loanAmount => setLoanAmount(loanAmount)}
+            placeholder="Enter value"
+            keyboardType="numeric"/>
+          </View>
+          <View style={styles.test}>
+            <Text style={styles.testText}>Loan Month Duration</Text>
+            <TextInput style={styles.input} 
+              onChangeText={loanMonthDuration => setLoanMonthDuration(loanMonthDuration)}
+              placeholder="Enter value"
+              keyboardType="numeric"/>
+          </View>
+          <View style={styles.test}>
+            <Text style={styles.testText}>Monthly Interest Rate</Text>
+            <TextInput 
+            style={styles.input}
+            onChangeText={monthlyInterestRate=> setMonthlyInterestRate(monthlyInterestRate)}
+            placeholder="Enter value"
+            keyboardType="numeric"/>
+          </View>
+         </ScrollView>
+         <View style={{backgroundColor:"lightblue"}}>
+          <Button title = "Calculate" onPress={()=> monthlyPaymentCalculation(loanAmount, monthlyInterestRate, loanMonthDuration)} />
+         </View>
+         {
         answer ? 
-        <Text style={{backgroundColor:'red'}}> {answer}</Text> : 
-        <Text style={{backgroundColor:'red'}}> Please Enter a Value</Text>
-      }
+        <View>
+          <Text style={{backgroundColor:"lightgrey"}}> ${answer}</Text>
+        </View> : null
+      }  
+      </KeyboardAvoidingView>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  testText: {
+    padding:5,
+    backgroundColor: "red",
+    borderWidth:5,
+    flexBasis:120,
+    textAlign:"center",
+  },
+  test: {
+    padding: 20,
+    backgroundColor: 'lightpink',
+    flexDirection:"row",
+    borderWidth:2,
+    borderColor:"grey"
+  },
   container: {
     flex: 1,
     padding: 20,
