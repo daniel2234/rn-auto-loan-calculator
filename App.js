@@ -56,7 +56,7 @@ export default function App() {
   const [loanMonthDuration, setLoanMonthDuration] = React.useState('');
   const [monthlyInterestRate, setMonthlyInterestRate] = React.useState('');
   const [answer, setAnswer] = React.useState('');
-  const [isShowingTable, setIsShowingTable] = React.useState(true);
+  const [amortizationSchedule, setAmortizationSchedule] = React.useState([]);
 
   function showFormattedLoanAmount(monthlyPayment) {
     let number = parseInt(monthlyPayment) || 0;
@@ -81,11 +81,11 @@ export default function App() {
     setAnswer(formattedAnswer);
   }
 
-  function calculateMonthlyAmorizations(monthlyPayment, loanAmount, interest, loanMonthDuration) {
+  function calculateMonthlyAmorizations(loanAmount, interest, loanMonthDuration) {
     let amorizationArray = []
-    let monthlyRate = interest / 100 / 12 //
+    let monthlyRate = interest / 100 / 12 //need to add calculate logic for simplification
     let payment = loanAmount * (monthlyRate/(1-Math.pow(
-      1+monthlyRate, -loanMonthDuration)));
+      1+monthlyRate, -loanMonthDuration))); 
     let interestPayment = 0
     let principalPayment = 0
   
@@ -101,7 +101,8 @@ export default function App() {
       loanAmount = loanAmount - principalPayment;
       amorizationArray.push(monthly);
     }
-    return amorizationArray;
+    console.log(amorizationArray);
+    setAmortizationSchedule(amorizationArray);
   }
     
   return (
@@ -145,9 +146,11 @@ export default function App() {
             <Text>Total of 12 Payments  ${answer * 12}</Text>
             <Text>Total Interest ${(answer * 12) - loanAmount}</Text>
             <View>
-              <Button title="View Amortization Schedule" onPress={() => alert('true')}/>
+              <Button title="View Amortization Schedule" onPress={() => calculateMonthlyAmorizations(loanAmount, monthlyInterestRate, loanMonthDuration)}/>
            </View> 
-          </View> : null
+          </View> : <View>
+            {console.log(amortizationSchedule)}
+          </View>
         }
       </KeyboardAvoidingView>
     </View>
