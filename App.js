@@ -82,8 +82,10 @@ export default function App() {
   }
 
   function calculateMonthlyAmorizations(loanAmount, interest, loanMonthDuration) {
+    interest = monthlyInterestRateConversion(interest);
+
     let amorizationArray = []
-    let monthlyRate = interest / 100 / 12 //need to add calculate logic for simplification
+    let monthlyRate = interestRateConversion(interest);
     let payment = loanAmount * (monthlyRate/(1-Math.pow(
       1+monthlyRate, -loanMonthDuration))); 
     let interestPayment = 0
