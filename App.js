@@ -1,11 +1,12 @@
 import React from 'react';
-import { Button, KeyboardAvoidingView, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Button, FlatList, KeyboardAvoidingView, ScrollView, StyleSheet, Text, TextInput, View, SafeAreaView } from 'react-native';
 
 //https://stackoverflow.com/questions/44357336/setting-up-a-table-layout-in-react-native
 //https://stackoverflow.com/questions/52661362/textinput-full-view-in-row-direction
 //https://stackoverflow.com/questions/67623854/how-to-reference-button-in-card-component-in-react-native
-
-
+// https://stackoverflow.com/questions/61152541/react-native-not-able-show-display-table-inside-a-flat-list
+//https://codepen.io/joeymack47/pen/fHwvd?editors=1010
+//https://codesandbox.io/s/z67yyo0wj3?file=/index.js
 // in essence:
 // 1. Initialise state with a boolean set to false
 // 2. Render the component conditionally based on this boolean; so initially the component will now show up on the DOM
@@ -48,9 +49,29 @@ import { Button, KeyboardAvoidingView, ScrollView, StyleSheet, Text, TextInput, 
 //   }
 // }
 
-
+//1
+const Payment = ({month, beginning_balance, interest, principal, ending_balance }) => (
+  <View style={{ flex: 1,borderWidth:1, flexDirection:'row', alignItems: 'center', justifyContent: 'center', padding:5, backgroundColor:'blue' }}>
+    <Text style={{padding:5, backgroundColor:'red'}}>{month}</Text>
+    <Text style={{padding:5, backgroundColor:'red'}}>${beginning_balance}</Text>
+    <Text style={{padding:5, backgroundColor:'red'}}>${interest}</Text>
+    <Text style={{padding:5, backgroundColor:'red'}}>${principal}</Text>
+    <Text style={{padding:5, backgroundColor:'red'}}>${ending_balance}</Text>
+  </View>
+)
 
 export default function App() {
+
+  //2
+  const renderItem = ({ item }) => (
+    <Payment 
+          month = {item.month}
+          beginning_balance = {item.beginning_balance} 
+          interest={item.interest} 
+          principal={item.principal}
+          ending_balance={item.ending_balance}
+    />
+  );
 
   const [loanAmount, setLoanAmount] = React.useState(''); //Init Empty
   const [loanMonthDuration, setLoanMonthDuration] = React.useState('');
@@ -90,16 +111,19 @@ export default function App() {
       1+monthlyRate, -loanMonthDuration))); 
     let interestPayment = 0
     let principalPayment = 0
+    let endingBalance = 0
   
     for (let i = 1; i <= loanMonthDuration; i++) {
       let monthly = {}
-      monthly["month"] =  i;
-      monthly["beginning_balance"] = loanAmount;
+      monthly["month"] =  String(i);
+      console.log(typeof loanAmount)
+      monthly["beginning_balance"] = String(Number(loanAmount).toFixed(2));
       interestPayment = loanAmount * monthlyRate
-      monthly["interest"] = interestPayment;
+      monthly["interest"] = String(interestPayment.toFixed(2));
       principalPayment = payment - interestPayment
-      monthly["principal"] = principalPayment;
-      monthly["ending_balance"] = loanAmount - principalPayment;
+      monthly["principal"] = String(principalPayment.toFixed(2));
+      endingBalance = loanAmount - principalPayment
+      monthly["ending_balance"] = Number(endingBalance).toFixed(2);
       loanAmount = loanAmount - principalPayment;
       amorizationArray.push(monthly);
     }
@@ -145,7 +169,7 @@ export default function App() {
           <View>
             <Text>Results</Text>
             <Text style={{backgroundColor:"lightgrey"}}> Payment Every Month ${answer}</Text>
-            <Text>Total of 12 Payments  ${answer * 12}</Text>
+            <Text>Total of {loanMonthDuration} Payments  ${answer * 12}</Text>
             <Text>Total Interest ${(answer * 12) - loanAmount}</Text>
             <View>
               <Button title="View Amortization Schedule" onPress={() => calculateMonthlyAmorizations(loanAmount, monthlyInterestRate, loanMonthDuration)}/>
@@ -155,6 +179,14 @@ export default function App() {
           </View>
         }
       </KeyboardAvoidingView>
+  {/* 3 */}
+      <SafeAreaView style={styles.container}>
+        <FlatList
+          data={amortizationSchedule}
+          renderItem={renderItem}
+          keyExtractor={payment => payment.month}
+        />
+      </SafeAreaView>
     </View>
   );
 }
